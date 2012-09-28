@@ -223,8 +223,6 @@ function processJsBundle(options, jsBundle, bundleDir, jsFiles, bundleName, cb) 
             return;
         }
 
-        console.log("writing " + bundleName + "...");
-
         var allJs = "", allMinJs = "";
         for (var i = 0; i < allJsArr.length; i++) {
             allJs += ";" + allJsArr[i] + "\n";
@@ -233,10 +231,10 @@ function processJsBundle(options, jsBundle, bundleDir, jsFiles, bundleName, cb) 
 
         var afterBundle = options.skipmin ? cb : function (_) {
             var minFileName = getMinFileName(bundleName);
-            fs.writeFile(minFileName, allMinJs, cb);
+            writeToFile(minFileName, allMinJs, cb);
         };
         if (!options.bundleminonly) {
-            fs.writeFile(bundleName, allJs, afterBundle);
+            writeToFile(bundleName, allJs, afterBundle);
         } else {
             afterBundle();
         }
@@ -302,8 +300,6 @@ function processCssBundle(options, cssBundle, bundleDir, cssFiles, bundleName, c
             return;
         }
 
-        console.log("writing " + bundleName + "...");
-
         var allCss = "", allMinCss = "";
         for (var i = 0; i < allCssArr.length; i++) {
             allCss += allCssArr[i] + "\n";
@@ -312,11 +308,11 @@ function processCssBundle(options, cssBundle, bundleDir, cssFiles, bundleName, c
 
         var afterBundle = options.skipmin ? cb : function (_) {
             var minFileName = getMinFileName(bundleName);
-            fs.writeFile(minFileName, allMinCss, cb);
+            writeToFile(minFileName, allMinCss, cb);
         };
 
         if (!options.bundleminonly) {
-            fs.writeFile(bundleName, allCss, afterBundle);
+            writeToFile(bundleName, allCss, afterBundle);
         } else {
             afterBundle();
         }
@@ -481,4 +477,9 @@ function readTextFile(filePath, cb) {
         if (err) throw err;
         cb(stripBOM(fileContents));
     });
+}
+
+function writeFile(path, contents, cb) {
+    console.log("writing " + path + "...");
+    fs.writeFile(path, contents, cb);
 }
