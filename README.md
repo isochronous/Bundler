@@ -30,6 +30,8 @@ After moving to Bundler for all their compilation and minification, [StackOverfl
 Checkout [Social Bootstrap Api](https://github.com/ServiceStack/SocialBootstrapApi) for a great starting template to base your next Single Page App on.
 Includes [Twitter Bootstrap](http://twitter.github.com/bootstrap/) + [Backbone.js](http://backbonejs.org/) + ASP.NET MVC + [ServiceStack](https://github.com/ServiceStack/ServiceStack) with Bundler all wired-up with **Twitter** + **Facebook** + HTML Form + Basic and Digest Auth providers ready-to-go out-of-the-box.
 
+#### TFS Integration (work in progress)
+Includes a batch file that will check out the bundle output files before trying to write to them, then check them back in afterwards.
 
 ## Release Notes
 
@@ -90,6 +92,13 @@ Allows you to run **Alt T + B** (or assign your own short-cut) to re-compile and
 Alternatively you can run bundler after every successful build. Add the line below to **Properties** > **Build events** > **Post-build event**:
 
     "$(ProjectDir)bundler\node.exe" "$(ProjectDir)bundler\bundler.js" "$(ProjectDir)Content" "$(ProjectDir)Scripts"
+
+### Run script with TFS checkout / checkin
+If you have TFS and your bundle output files are in source control, you'll need to have them checked out before trying to write to them.  There is a batch
+file that will do this for any bundle.min.js or bundle.min.css file (but it won't check out the non-minified output, or the individual minified scripts included in the bundle).
+Add the line below to **Properties** > **Build events** > **Post-build event**:
+
+    "$(ProjectDir)bundler\bundle.bat" "$(ProjectDir)Content" "$(ProjectDir)Scripts"
 
 ![Add Bundler to VS.NET Post-Build event](http://servicestack.net/img/post-build-bundler.png)
 
