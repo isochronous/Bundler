@@ -479,7 +479,7 @@ function readTextFile(filePath, cb) {
     });
 }
 
-function writeFile(path, contents, cb) {
+function writeToFile(path, contents, cb) {
     console.log("writing " + path + "...");
     fs.writeFile(path, contents, cb);
 }
