@@ -54,6 +54,7 @@ To run you just need a copy of **/bundler** folder in your website host director
 [![Install-Pacakage ServiceStack.Host.Mvc](http://www.servicestack.net/img/nuget-bundler.png)](https://nuget.org/packages/Bundler)
 
 *Once installed you can optionally exclude the '/bundler' or '/bundler/node_modules' folders from your VS.NET project since they contain a lot of files (not required to be referenced).*
+*Important!** If you have a build script that moves files around before/after building, you may need to add the node_modules folder to your project so the necessary script files are available for your post-build step.*
 
 By default bundler looks at **/Content** and **/Scripts** project folders - this can be changed by editing [/bundler/bundler.cmd](https://github.com/ServiceStack/Bundler/blob/master/NuGet/content/bundler/bundler.cmd):
 
