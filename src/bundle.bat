@@ -15,24 +15,19 @@ set CWD=%contentDir%
 :: Change to our /Content directory
 cd %CWD%.
 
+echo Searching for bundle files under %CWD%
+
 :: loop through all .bundle files off of our current directory
 FOR /F "tokens=*" %%I in ('dir /b /s *.bundle') DO (
 
-    REM echo "looking at "%%I
-
     SET PTH=%%~dpI
 
-    REM echo "got path = "!PTH!
-
     FOR %%J in (%%~nI) DO (
-        REM echo "got filename = "%%~nJ
         SET PTH=!PTH!%%~nJ
         SET EXT=%%~xJ
-        REM echo "got extension = "!EXT!
     )
 
     SET PTH=!PTH!.min!EXT!
-    echo "Checking out "!PTH!
 
     call "%VS100COMNTOOLS%..\IDE\tf" checkout !PTH!
 )
@@ -44,10 +39,11 @@ if %CWD%.==%contentDir%. (
 )
 
 :: change back to our bundler dir
-cd
+cd %bundlerDir%.
 
 :: and run bundler! YAYAYAYAYAYAY!
-start "bundler" /D%bundlerDir% /B /wait node.exe bundler.js %contentDir% %scriptsDir%
+call .\node.exe bundler.js %contentDir% %scriptsDir%
+
 
 set CWD=%contentDir%
 set PARAMS=checkin /comment:"Bundler Minification" /noprompt /override:"Post-Build minification and combination step"
@@ -59,21 +55,14 @@ cd %CWD%
 :: loop through all .bundle files off of our current directory
 FOR /F "tokens=*" %%I in ('dir /b /s *.bundle') DO (
 
-    REM echo "looking at "%%I
-
     SET PTH=%%~dpI
 
-    REM echo "got path = "!PTH!
-
     FOR %%J in (%%~nI) DO (
-        REM echo "got filename = "%%~nJ
         SET PTH=!PTH!%%~nJ
         SET EXT=%%~xJ
-        REM echo "got extension = "!EXT!
     )
 
     SET PTH=!PTH!.min!EXT!
-    echo "Checking in "!PTH!
 
     call "%VS100COMNTOOLS%..\IDE\tf" %PARAMS% !PTH!
 )
@@ -84,4 +73,4 @@ if %CWD%.==%contentDir%. (
     GOTO CheckinLoopStart
 )
 
-echo "All Done!"
+echo Bundler script complete
