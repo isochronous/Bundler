@@ -101,6 +101,17 @@ Add the line below to **Properties** > **Build events** > **Post-build event**:
 
     "$(ProjectDir)bundler\bundle.bat" "$(ProjectDir)Content" "$(ProjectDir)Scripts"
 
+### Pre-build or Post-build? ###
+If using build events to run bundler, post-build events are preferred because the process can be skipped if the build fails.  However, bundler will not work as expected with some build configurations if file or folder locations are changed as part of the build.  In these cases, it makes more sense to use a pre-build step instead of a post-build.  Simply enter the code above in the **Pre-build event** text area in **Properties** > **Build events**, rather than the **Post-build event** field.
+
+### Running bundler for release builds only ###
+At my job, we use minified/combined scripts in release only, and for all other environments we include each script and stylesheet individually.  This means that the bundler build event is only required for release builds, and just slows down the process for all other build configurations.  To make your pre-or-post-build event occur only on certain build configurations, open your project's .csproj file in a text editor, find the build event propertygroup, and add a Condition attribute to the propertygroup node like so:
+
+    <PropertyGroup Condition="'$(Configuration)'=='Release'">
+        <!-- If you're using the TFS batch file and a pre-build event -->
+        <PreBuildEvent>your particular build command here</PreBuildEvent>
+    </PropertyGroup>
+
 ![Add Bundler to VS.NET Post-Build event](http://servicestack.net/img/post-build-bundler.png)
 
 ## How it works
