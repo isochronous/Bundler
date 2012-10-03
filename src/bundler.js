@@ -191,6 +191,8 @@ function scanDir(allFiles, cb) {
                             if (!fileName.startsWith(bundleDir)) return '#';
                             if (!fileName.endsWithAny(['.css', '.less', '.sass', '.scss'])) return '#';
                             if (fileName.endsWithAny(['.min.css'])) return '#';
+                            // Any .sass or .scss file that begins with _ should not emit a corresponding .css file - it's an import only
+                            if (fileName.endsWithAny(['.sass', '.scss']) && path.basename(fileName).charAt(0) === '_') return '#';
                             if (!recursive && (path.dirname(fileName) !== bundleDir)) return '#';
                             return fileName.substring(bundleDir.length + 1);
                         });
@@ -333,7 +335,12 @@ function processCssBundle(options, cssBundle, bundleDir, cssFiles, bundleName, c
 
         var filePath = path.join(bundleDir, file),
                 cssPath = path.join(bundleDir, cssFile),
-                minCssPath = getMinFileName(cssPath);
+                minCssPath = getMinFileName(cssPath),
+                relativePath = path.dirname(path.relative(bundleDir, cssPath));
+
+        //console.log("bundleDir: %s  |  cssPath: %s  |  relativePath: %s", bundleDir, cssPath, relativePath);
+        if (relativePath === ".")
+            relativePath = null;
 
         var i = index++;
         pending++;
@@ -353,8 +360,12 @@ function processCssBundle(options, cssBundle, bundleDir, cssFiles, bundleName, c
                 }
             },
             function (css) {
+                // Need to rewrite relative URLs within CSS files to account for possible change
+                // in location
+                css = rewriteUrlPaths(css, relativePath);
                 allCssArr[i] = css;
                 var withMin = function (minCss) {
+                    minCss = rewriteUrlPaths(minCss, relativePath);
                     allMinCssArr[i] = minCss;
 
                     if (! --pending) whenDone();
@@ -480,6 +491,32 @@ function readTextFile(filePath, cb) {
 }
 
 function writeToFile(path, contents, cb) {
-    console.log("writing " + path + "...");
+    //console.log("writing " + path + "...");
     fs.writeFile(path, contents, cb);
+}
+
+/*
+ * Code adapted from https://github.com/zillow/combohandler/blob/a684c9baecee432811630b14f42ae37b9393021d/lib/combohandler.js
+ * NodeJs Path reference: http://nodejs.org/api/path.html
+*/
+function rewriteUrlPaths(data, pathToPrepend) {
+    var urlRegex = /url\(['"]?([^\)]+)['"]?\)/g,
+        dataCopy = data;
+
+    if (pathToPrepend && urlRegex.test(data)) {
+        dataCopy = data.replace(urlRegex, function(match, filePath){
+            var newPath,
+                absolutePathRegex = /^(\/\/|https?|data:)/;
+
+            //if this is an absolute URL (starts with //, http(s), or data:, then don't change it)
+            if (absolutePathRegex.test(filePath)) {
+                return "url('" + filePath + "')";
+            }
+
+            newPath = path.join(pathToPrepend, filePath).replace(/\\/g, "/");
+            console.log("Rewriting %s to %s", filePath, newPath);
+            return "url('" + newPath + "')";
+        });
+    }
+    return dataCopy;
 }

@@ -12,6 +12,7 @@ Bundler uses the popular and well-tested javascript libraries in [node's package
   - All bundling done at **compile time**, by running the single `bundler.cmd` command - no dependencies needed at runtime
   - Uses a self-contained **node.exe** for all compilation & minification - designed for maximum runtime and compile time performance
   - All node.js `.js` and MVC C# `.cs` src files used are in plain-text - so can be easily be followed, extended or customized
+  - Now rewrites relative paths inside url() in CSS files - which keeps image paths valid when including stylesheets in bundles located in other directories
 
 ## Extremely fast at both Build and Runtime
 Bundler is extremely fast - uses Googles leading V8 JavaScript engine (inside node.exe). All build scripts use only *pure JavaScript* implementations (uglifyjs, coffee-script, clean-css, etc) allowing all compilation and minification to run in a single process.
