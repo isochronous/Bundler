@@ -366,7 +366,9 @@ function processCssBundle(options, cssBundle, bundleDir, cssFiles, bundleName, c
                 }
                 allCssArr[i] = css;
                 var withMin = function (minCss) {
-                    minCss = rewriteUrlPaths(minCss, relativePath);
+                    if (options.rewriterelativepaths) {
+                        minCss = rewriteUrlPaths(minCss, relativePath);
+                    }
                     allMinCssArr[i] = minCss;
 
                     if (! --pending) whenDone();
