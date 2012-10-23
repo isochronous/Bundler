@@ -214,6 +214,8 @@ The currently available options are:
   - **folder** - Used as a trigger to transform all files in the folder with this bundle file. If the `recursive` value is used, a seek will search recursively from this root transforming all files in all folders searched. When the `folder` option is used, the `nobundle` option is automatically set. When the `folder` option is used, listing files in the bundle file does nothing.
   - **outputbundleonly** - Does not create individual .min files for each file in the bundle. The bundled file is the only output.
   - **bundleminonly** - Does not create a non-minimized version of the bundle file. Only creates the .min version of the bundle.
+  - **forcecompile** - Always re-minifies files regardless of modification date.  By default, only files that are newer than their minified versions are minimized, otherwise the existing minified file is used.  There are some situations, however, where this is undesirable behavior (for example, if your build script copies all files to a new location before building), which is why this option was added.
+  - **rewriterelativepaths** - Rewrites any relative paths within a url() block inside CSS/Sass/Less files to maintain proper path structure.  Useful when your .bundle file is in a different directory than its input CSS files, and the input CSS files are using relative paths.
 
 Tip: If you just want bundler to transform all the files in your content folder, add a bundle file in the root of the content folder and set its contents to the following:
 

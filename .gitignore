@@ -36,7 +36,6 @@ build/*.dll
 *.user
 
 release/latest/
-*.nupkg
 release/*
 *.min.js
 *.min.css

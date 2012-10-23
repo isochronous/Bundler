@@ -338,7 +338,6 @@ function processCssBundle(options, cssBundle, bundleDir, cssFiles, bundleName, c
                 minCssPath = getMinFileName(cssPath),
                 relativePath = path.dirname(path.relative(bundleDir, cssPath));
 
-        //console.log("bundleDir: %s  |  cssPath: %s  |  relativePath: %s", bundleDir, cssPath, relativePath);
         if (relativePath === ".")
             relativePath = null;
 
@@ -362,7 +361,9 @@ function processCssBundle(options, cssBundle, bundleDir, cssFiles, bundleName, c
             function (css) {
                 // Need to rewrite relative URLs within CSS files to account for possible change
                 // in location
-                css = rewriteUrlPaths(css, relativePath);
+                if (options.rewriterelativepaths) {
+                    css = rewriteUrlPaths(css, relativePath);
+                }
                 allCssArr[i] = css;
                 var withMin = function (minCss) {
                     minCss = rewriteUrlPaths(minCss, relativePath);
@@ -428,7 +429,7 @@ function compileAsync(options, mode, compileFn /*compileFn(text, textPath, cb(co
                 });
         },
         function (doCompile) {
-            if (doCompile) {
+            if (doCompile || options.forcecompile) {
                 console.log(mode + " " + compileTextPath + "...");
                 var onAfterCompiled = function(minText) {
                     if (options.outputbundleonly) {
